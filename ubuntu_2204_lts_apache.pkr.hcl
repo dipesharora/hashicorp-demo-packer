@@ -67,7 +67,7 @@ source "azure-arm" "hashidemo_ubuntu" {
 # https://www.packer.io/docs/templates/hcl_templates/blocks/build
 build {
   hcp_packer_registry {
-    bucket_name = "ubuntu_2204_lts"
+    bucket_name = "ubuntu-2204-lts"
     description = <<EOT
 This image contains Ubuntu 22.04 LTS release with Apache server installed.
     EOT
