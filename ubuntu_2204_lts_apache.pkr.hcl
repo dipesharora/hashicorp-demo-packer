@@ -6,22 +6,18 @@ variable "version" {
 
 variable "azure_client_id" {
   type    = string
-  default = "28fab721-6c1f-4207-9f17-e55ee2be2e73"
 }
 
 variable "azure_client_secret" {
   type    = string
-  default = "5Ys8Q~5Xx9jAAwbaR6JTD1EsG9VM_zeK_afFmbH4"
 }
 
 variable "azure_subscription_id" {
   type    = string
-  default = "935cb127-fb61-44b5-bf1a-2e1a286cbea7"
 }
 
 variable "azure_tenant_id" {
   type    = string
-  default = "73b1cee5-40f7-4a96-8044-7bdf793a0661"
 }
 
 variable "azure_build_vm_size" {
