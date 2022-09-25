@@ -1,0 +1,41 @@
+name: Packer Build
+
+on:
+  push:
+
+jobs:
+  packer:
+    runs-on: ubuntu-latest
+    name: packer
+
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v2
+
+      # fix backwards incompatibilities in template
+      - name: Fix Template
+        uses: hashicorp/packer-github-actions@v0.2.0
+        with:
+          command: fix
+
+      # validate templates
+      - name: Validate Template
+        uses: hashicorp/packer-github-actions@v0.2.0
+        with:
+          command: validate
+          arguments: -syntax-only
+          target: ubuntu_2204_lts_apache.pkr.hcl
+
+      # build artifact
+      - name: Build Artifact
+        uses: hashicorp/packer-github-actions@v0.2.0
+        with:
+          command: build
+          arguments: "-color=false -on-error=abort"
+          target: ubuntu_2204_lts_apache.pkr.hcl
+        env:
+          PACKER_LOG: 1
+          HCP_CLIENT_ID: ${{ secrets.HCP_CLIENT_ID }}
+          HCP_CLIENT_SECRET: ${{ secrets.HCP_CLIENT_SECRET }}
+
+      # additional steps to process artifacts
