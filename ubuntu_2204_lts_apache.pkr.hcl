@@ -97,4 +97,12 @@ This image contains Ubuntu 22.04 LTS release with Apache server installed.
     inline_shebang = "/bin/sh -x"
   }
 
+  post-processor "manifest" {
+    output     = "packer_manifest.json"
+    strip_path = true
+    custom_data = {
+      iteration_id = packer.iterationID
+    }
+  }
+
 }
