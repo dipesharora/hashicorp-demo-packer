@@ -1,43 +1,62 @@
-name: Packer Build
+name: Packer Build and Deploy
 
 on:
   push:
+    tags: ["v[0-9].[0-9]+.[0-9]+"]
+    branches:
+      - "development"
+      - "staging"
+      - "main"
+
+env:
+  HCP_CLIENT_ID: ${{ secrets.HCP_CLIENT_ID }}
+  HCP_CLIENT_SECRET: ${{ secrets.HCP_CLIENT_SECRET }}
+  HCP_PROJECT_ID: ${{ secrets.HCP_PROJECT_ID }}
+  HCP_ORGANIZATION_ID: ${{ secrets.HCP_ORGANIZATION_ID }}
+  HCP_BUCKET_NAME: "ubuntu-2204-lts"
+  azure_client_id: ${{ secrets.ARM_CLIENT_ID }}
+  azure_client_secret: ${{ secrets.ARM_CLIENT_SECRET }}
+  azure_subscription_id: ${{ secrets.ARM_SUBSCRIPTION_ID }}
+  azure_tenant_id: ${{ secrets.ARM_TENANT_ID }}
 
 jobs:
-  packer:
-    runs-on: self-hosted
-    name: packer
-
+  build-image:
+    name: Build
+    runs-on: ubuntu-latest
+    outputs:
+      iteration_id: ${{ steps.hcp.outputs.iteration_id }}
     steps:
       - name: Checkout Repository
-        uses: actions/checkout@v2
+        uses: actions/checkout@v3
 
-      # Print Packer Version
-      - name: Print Packer Version
-        uses: hashicorp/packer-github-actions@v0.2.0
-        with:
-          command: version
+      - name: Packer Init
+        run: packer init .
 
-      # validate templates
-      - name: Validate Template
-        uses: hashicorp/packer-github-actions@v0.2.0
-        with:
-          command: validate
-          arguments: -syntax-only
-          target: ubuntu_2204_lts_apache.pkr.hcl
+      - name: Packer Build - Branches
+        if: "startsWith(github.ref, 'refs/heads/')"
+        run: packer build .
 
-      # build artifact
-      - name: Build Artifact
-        uses: hashicorp/packer-github-actions@v0.2.0
-        with:
-          command: build
-          arguments: "-color=false -on-error=abort"
-          target: ubuntu_2204_lts_apache.pkr.hcl
-        env:
-          PACKER_LOG: 1
-          HCP_CLIENT_ID: ${{ secrets.HCP_CLIENT_ID }}
-          HCP_CLIENT_SECRET: ${{ secrets.HCP_CLIENT_SECRET }}
-          azure_client_id: ${{ secrets.ARM_CLIENT_ID }}
-          azure_client_secret: ${{ secrets.ARM_CLIENT_SECRET }}
-          azure_subscription_id: ${{ secrets.ARM_SUBSCRIPTION_ID }}
-          azure_tenant_id: ${{ secrets.ARM_TENANT_ID }}
+      - name: Packer Build - Tags
+        if: startsWith(github.ref, 'refs/tags/v')
+        run: HCP_PACKER_BUILD_FINGERPRINT=$(date +'%m%d%YT%H%M%S') packer build .
+
+      - name: Get HCP Packer Iteration ID from Packer Manifest
+        id: hcp
+        run: |
+          last_run_uuid=$(jq -r '.last_run_uuid' "./packer_manifest.json")
+          build=$(jq -r '.builds[] | select(.packer_run_uuid == "'"$last_run_uuid"'")' "./packer_manifest.json")
+          iteration_id=$(echo "$build" | jq -r '.custom_data.iteration_id')
+          echo "::set-output name=iteration_id::$iteration_id"
+  update-hcp-packer-channel:
+    name: Update HCP Packer channel
+    needs: ["build-image"]
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v3
+
+      - name: Create and set channel
+        working-directory: .github/scripts
+        run: |
+          channel_name=$( echo ${{github.ref_name}} | sed 's/\./-/g')
+          ./create_channel_iteration.sh $HCP_BUCKET_NAME $channel_name "${{ needs.build-image.outputs.iteration_id }}"
