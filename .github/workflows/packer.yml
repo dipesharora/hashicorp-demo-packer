@@ -12,11 +12,11 @@ jobs:
       - name: Checkout Repository
         uses: actions/checkout@v2
 
-      # initialize template
-      - name: Initialize Template
+      # Print Packer Version
+      - name: Print Packer Version
         uses: hashicorp/packer-github-actions@v0.2.0
         with:
-          command: init   
+          command: version
       
       # validate templates
       - name: Validate Template
