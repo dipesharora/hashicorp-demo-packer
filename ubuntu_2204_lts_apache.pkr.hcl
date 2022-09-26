@@ -92,7 +92,7 @@ This image contains Ubuntu 22.04 LTS release with Apache server installed.
       "sleep 30",
       "sudo apt-get install apache2 -y",
       "sleep 30",
-      "echo Welcome to HashiCorp Demo > /var/www/html/index.html",
+      "echo Welcome to HashiCorp Demo Part 3 > /var/www/html/index.html",
     ]
     inline_shebang = "/bin/sh -x"
   }
