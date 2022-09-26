@@ -18,6 +18,18 @@ jobs:
         with:
           command: version
       
+      # Install Packer version 1.8.3
+      - name: Use latest Packer
+        uses: hashicorp-contrib/setup-packer@v2
+        with:
+          packer-version: 1.8.3
+
+      # Print Packer Version
+      - name: Print Packer Version
+        uses: hashicorp/packer-github-actions@v0.2.0
+        with:
+          command: version
+
       # validate templates
       - name: Validate Template
         uses: hashicorp/packer-github-actions@v0.2.0
