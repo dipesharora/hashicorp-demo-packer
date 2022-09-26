@@ -14,10 +14,10 @@ env:
   HCP_PROJECT_ID: ${{ secrets.HCP_PROJECT_ID }}
   HCP_ORGANIZATION_ID: ${{ secrets.HCP_ORGANIZATION_ID }}
   HCP_BUCKET_NAME: "ubuntu-2204-lts"
-  # azure_client_id: ${{ secrets.ARM_CLIENT_ID }}
-  # azure_client_secret: ${{ secrets.ARM_CLIENT_SECRET }}
-  # azure_subscription_id: ${{ secrets.ARM_SUBSCRIPTION_ID }}
-  # azure_tenant_id: ${{ secrets.ARM_TENANT_ID }}
+  azure_client_id: ${{ secrets.ARM_CLIENT_ID }}
+  azure_client_secret: ${{ secrets.ARM_CLIENT_SECRET }}
+  azure_subscription_id: ${{ secrets.ARM_SUBSCRIPTION_ID }}
+  azure_tenant_id: ${{ secrets.ARM_TENANT_ID }}
 
 jobs:
   build-image:

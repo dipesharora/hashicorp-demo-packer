@@ -6,27 +6,27 @@ variable "version" {
 
 variable "azure_client_id" {
   type    = string
-  default = env("ARM_CLIENT_ID")
+  default = env("azure_client_id")
 }
 
-// variable "azure_client_secret" {
-//   type    = string
-//   default = env("ARM_CLIENT_SECRET")
-// }
-
-variable "azure_client_cert_path" {
+variable "azure_client_secret" {
   type    = string
-  default = env("PFX_PATH")
+  default = env("azure_client_secret")
 }
+
+// variable "azure_client_cert_path" {
+//   type    = string
+//   default = env("PFX_PATH")
+// }
 
 variable "azure_subscription_id" {
   type    = string
-  default = env("ARM_SUBSCRIPTION_ID")
+  default = env("azure_subscription_id")
 }
 
 variable "azure_tenant_id" {
   type    = string
-  default = env("ARM_TENANT_ID")
+  default = env("azure_tenant_id")
 }
 
 variable "azure_build_vm_size" {
@@ -45,8 +45,8 @@ source "azure-arm" "hashidemo_ubuntu" {
     workload = "HashiCorp Demo"
   }
   client_id                          = var.azure_client_id
-  // client_secret                      = var.azure_client_secret
-  client_cert_path                  = var.azure_client_cert_path
+  client_secret                      = var.azure_client_secret
+  // client_cert_path                  = var.azure_client_cert_path
   subscription_id                    = var.azure_subscription_id
   tenant_id                          = var.azure_tenant_id
   vm_size                            = var.azure_build_vm_size
