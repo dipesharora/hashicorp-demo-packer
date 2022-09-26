@@ -39,6 +39,7 @@ jobs:
       - name: Store filename as Environment Variable
         env:
           PFX_PATH: ${{ steps.create_pem.outputs.filePath }}
+        run: packer --version
 
       - name: Packer Init
         run: packer init .
