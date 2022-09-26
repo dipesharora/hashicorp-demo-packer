@@ -18,6 +18,7 @@ env:
   azure_client_secret: ${{ secrets.ARM_CLIENT_SECRET }}
   azure_subscription_id: ${{ secrets.ARM_SUBSCRIPTION_ID }}
   azure_tenant_id: ${{ secrets.ARM_TENANT_ID }}
+  template_version: 1.0.0
 
 jobs:
   build-image:
