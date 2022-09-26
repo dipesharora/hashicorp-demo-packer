@@ -18,7 +18,7 @@ env:
   azure_client_secret: ${{ secrets.ARM_CLIENT_SECRET }}
   azure_subscription_id: ${{ secrets.ARM_SUBSCRIPTION_ID }}
   azure_tenant_id: ${{ secrets.ARM_TENANT_ID }}
-  template_version: 1.0.0
+  template_version: 2.0.0
 
 jobs:
   build-image:
@@ -29,18 +29,6 @@ jobs:
     steps:
       - name: Checkout Repository
         uses: actions/checkout@v3
-
-      - name: Rebuild PEM from Base 64 Content
-        id: create_pem
-        uses: timheuer/base64-to-file@v1.1
-        with:
-          fileName: 'cert.pem'
-          encodedString: ${{ secrets.PEM_BASE64_CONTENT }}
-      
-      - name: Store filename as Environment Variable
-        env:
-          PFX_PATH: ${{ steps.create_pem.outputs.filePath }}
-        run: packer --version
 
       - name: Packer Init
         run: packer init .
