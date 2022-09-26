@@ -6,18 +6,22 @@ variable "version" {
 
 variable "azure_client_id" {
   type    = string
+  default = "{{env 'ARM_CLIENT_ID'}}"
 }
 
 variable "azure_client_secret" {
   type    = string
+  default = "{{env 'ARM_CLIENT_SECRET'}}"
 }
 
 variable "azure_subscription_id" {
   type    = string
+  default = "{{env 'ARM_SUBSCRIPTION_ID'}}"
 }
 
 variable "azure_tenant_id" {
   type    = string
+  default = "{{env 'ARM_TENANT_ID'}}"
 }
 
 variable "azure_build_vm_size" {
