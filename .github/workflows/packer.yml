@@ -12,6 +12,12 @@ jobs:
       - name: Checkout Repository
         uses: actions/checkout@v2
 
+      # initialize template
+      - name: Initialize Template
+        uses: hashicorp/packer-github-actions@v0.2.0
+        with:
+          command: init   
+      
       # validate templates
       - name: Validate Template
         uses: hashicorp/packer-github-actions@v0.2.0
@@ -35,4 +41,3 @@ jobs:
           azure_client_secret: ${{ secrets.ARM_CLIENT_SECRET }}
           azure_subscription_id: ${{ secrets.ARM_SUBSCRIPTION_ID }}
           azure_tenant_id: ${{ secrets.ARM_TENANT_ID }}
-
