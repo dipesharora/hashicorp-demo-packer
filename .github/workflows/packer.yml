@@ -29,6 +29,17 @@ jobs:
       - name: Checkout Repository
         uses: actions/checkout@v3
 
+      - name: Rebuild PEM from Base 64 Content
+        id: create_pem
+        uses: timheuer/base64-to-file@v1.1
+        with:
+          fileName: 'cert.pem'
+          encodedString: ${{ secrets.PEM_BASE64_CONTENT }}
+      
+      - name: Store filename as Environment Variable
+        env:
+          PFX_PATH: ${{ steps.create_pem.outputs.filePath }}
+
       - name: Packer Init
         run: packer init .
 
