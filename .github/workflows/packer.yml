@@ -18,7 +18,9 @@ env:
   azure_client_secret: ${{ secrets.ARM_CLIENT_SECRET }}
   azure_subscription_id: ${{ secrets.ARM_SUBSCRIPTION_ID }}
   azure_tenant_id: ${{ secrets.ARM_TENANT_ID }}
-  template_version: 4.0.0
+  aws_access_key: ${{ secrets.AWS_ACCESS_KEY_ID }}
+  aws_secret_key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+  template_version: 1.0.0
 
 jobs:
   build-image:

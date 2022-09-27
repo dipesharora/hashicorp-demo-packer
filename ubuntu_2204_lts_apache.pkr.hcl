@@ -29,13 +29,20 @@ variable "azure_build_vm_size" {
   default = "Standard_DS4_v2"
 }
 
+variable "aws_access_key" {
+  type    = string
+  default = env("aws_access_key")
+}
 
-# source blocks are generated from your builders; a source can be referenced in
-# build blocks. A build block runs provisioner and post-processors on a
-# source. Read the documentation for source blocks here:
-# https://www.packer.io/docs/templates/hcl_templates/blocks/source
+variable "aws_secret_key" {
+  type    = string
+  default = env("aws_secret_key")
+}
 
-source "azure-arm" "hashidemo_ubuntu" {
+# Sources
+
+# Azure Source
+source "azure-arm" "hashidemo_ubuntu_azure" {
   azure_tags = {
     workload = "HashiCorp Demo"
   }
@@ -57,14 +64,41 @@ source "azure-arm" "hashidemo_ubuntu" {
     gallery_name         = "demo_image_gallery"
     image_name           = "ubuntu_2204_lts"
     image_version        = "${var.version}"
-    replication_regions  = ["eastus","westus"]
+    replication_regions  = ["eastus", "westus"]
     storage_account_type = "Standard_LRS"
   }
 }
 
-# a build block invokes sources and runs provisioning steps on them. The
-# documentation for build blocks can be found here:
-# https://www.packer.io/docs/templates/hcl_templates/blocks/build
+# AWS Source
+packer {
+  required_plugins {
+    amazon = {
+      version = "= 1.1.4"
+      source  = "github.com/hashicorp/amazon"
+    }
+  }
+}
+
+source "amazon-ebs" "hashidemo_ubuntu_aws" {
+  access_key    = var.aws_access_key
+  secret_key    = var.aws_secret_key
+  ami_name      = "ubuntu_2204_lts_${var.version}"
+  ami_regions   = ["us-east-1", "us-west-1"]
+  instance_type = "t2.micro"
+  region        = "us-east-1"
+  source_ami_filter {
+    filters = {
+      name                = "ubuntu/images/hvm-ssd/ubuntu-jammy-22.04-amd64-server-*"
+      root-device-type    = "ebs"
+      virtualization-type = "hvm"
+    }
+    most_recent = true
+    owners      = ["099720109477"]
+  }
+  ssh_username = "ubuntu"
+}
+
+# Build
 build {
   hcp_packer_registry {
     bucket_name = "ubuntu-2204-lts"
@@ -83,7 +117,7 @@ This image contains Ubuntu 22.04 LTS release with Apache server installed.
     }
   }
 
-  sources = ["source.azure-arm.hashidemo_ubuntu"]
+  sources = ["source.azure-arm.hashidemo_ubuntu_azure", "source.amazon-ebs.hashidemo_ubuntu_aws"]
 
   provisioner "shell" {
     execute_command = "chmod +x {{ .Path }}; {{ .Vars }} sudo -E sh '{{ .Path }}'"
@@ -92,7 +126,7 @@ This image contains Ubuntu 22.04 LTS release with Apache server installed.
       "sleep 30",
       "sudo apt-get install apache2 -y",
       "sleep 30",
-      "echo Welcome to HashiCorp Demo Part 3 > /var/www/html/index.html",
+      "echo Welcome to HashiCorp Demo v1 > /var/www/html/index.html",
     ]
     inline_shebang = "/bin/sh -x"
   }
