@@ -39,6 +39,16 @@ variable "aws_secret_key" {
   default = env("aws_secret_key")
 }
 
+variable "vpc_id" {
+  type    = string
+  default = "vpc-23955146"
+}
+
+variable "subnet_id" {
+  type    = string
+  default = "subnet-abb68eed"
+}
+
 # Sources
 
 # Azure Source
@@ -82,6 +92,8 @@ packer {
 source "amazon-ebs" "hashidemo_ubuntu_aws" {
   access_key    = var.aws_access_key
   secret_key    = var.aws_secret_key
+  vpc_id        = var.vpc_id
+  subnet_id     = var.subnet_id
   ami_name      = "ubuntu_2204_lts_${var.version}"
   ami_regions   = ["us-east-1", "us-west-1"]
   instance_type = "t2.micro"
