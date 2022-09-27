@@ -57,7 +57,7 @@ source "azure-arm" "hashidemo_ubuntu" {
     gallery_name         = "demo_image_gallery"
     image_name           = "ubuntu_2204_lts"
     image_version        = "${var.version}"
-    replication_regions  = ["eastus"]
+    replication_regions  = ["eastus","westus"]
     storage_account_type = "Standard_LRS"
   }
 }
