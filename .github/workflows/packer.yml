@@ -20,7 +20,7 @@ env:
   azure_tenant_id: ${{ secrets.ARM_TENANT_ID }}
   aws_access_key: ${{ secrets.AWS_ACCESS_KEY_ID }}
   aws_secret_key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-  template_version: 2.0.0
+  template_version: 3.0.0
 
 jobs:
   build-image:
